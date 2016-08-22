@@ -1,0 +1,77 @@
+#!/bin/bash
+# скрипт пвтается использовать параметр запуска или текущий каталог для поиска
+# в случае неудачи запрашивает путь к каталогу
+
+PWD=`pwd`
+if [[ $1 ]]
+then
+DIR=$1
+else
+DIR="."
+fi
+
+while [[ ! -d $DIR/examples ]]
+do
+echo "examples not found"
+echo "введите путь к каталогу apache-websocket"
+read DIR
+done
+
+cd  $DIR/examples
+scons
+
+cp *.so /usr/lib/apache2/modules/
+
+#Добавление в /etc/apache2/apache2.conf
+
+if [[ ! `grep "LoadModule websocket_module" /etc/apache2/apache2.conf` ]]
+then 
+echo "writing websocket_module"
+echo "LoadModule websocket_module   /usr/lib/apache2/modules/mod_websocket.so" >> /etc/apache2/apache2.conf
+fi
+
+if [[ ! `grep "LoadModule websocket_draft76_module" /etc/apache2/apache2.conf` ]]
+then 
+echo "writing websocket_draft76_module"
+echo "LoadModule websocket_draft76_module   /usr/lib/apache2/modules/mod_websocket.so" >> /etc/apache2/apache2.conf
+fi
+
+
+
+if [[ ! `grep "IfModule mod_websocket.c" /etc/apache2/apache2.conf` ]]
+then
+cat <<EOT >> /etc/apache2/apache2.conf
+
+ <IfModule mod_websocket.c>
+   <Location /echo>
+     SetHandler websocket-handler
+     WebSocketHandler /usr/lib/apache2/modules/mod_websocket_echo.so echo_init
+   </Location>
+ <Location /dumb-increment>
+     SetHandler websocket-handler
+     WebSocketHandler /usr/lib/apache2/modules/mod_websocket_dumb_increment.so dumb_increment_init
+  </Location>
+ </IfModule>
+EOT
+fi
+
+if [[ ! `grep "<IfModule mod_websocket_draft76.c>" /etc/apache2/apache2.conf ` ]]
+then
+cat <<EOT >> /etc/apache2/apache2.conf
+
+ <IfModule mod_websocket_draft76.c>
+   <Location /echo>
+     SetHandler websocket-handler
+     WebSocketHandler /usr/lib/apache2/modules/mod_websocket_echo.so echo_init
+     SupportDraft75 On
+  </Location>
+  <Location /dumb-increment>
+     SetHandler websocket-handler
+     WebSocketHandler /usr/lib/apache2/modules/mod_websocket_dumb_increment.so dumb_increment_init
+   </Location>
+</IfModule>
+EOT
+fi
+
+
+cd $PWD
