@@ -1,0 +1,10 @@
+Package: apache-websocket
+Version: 0.0.03
+Section: misc
+Priority: extra
+Maintainer: S. Daniloff daniloffsn@mail.ru
+Architecture: all
+Depends: apache2, apache2-dev, gcc, scons
+Description: Test package
+ Package from  https://github.com/disconnect/apache-websocket
+ 

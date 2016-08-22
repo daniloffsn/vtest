@@ -33,7 +33,7 @@ fi
 if [[ ! `grep "LoadModule websocket_draft76_module" /etc/apache2/apache2.conf` ]]
 then 
 echo "writing websocket_draft76_module"
-echo "LoadModule websocket_draft76_module   /usr/lib/apache2/modules/mod_websocket.so" >> /etc/apache2/apache2.conf
+echo "LoadModule websocket_draft76_module   /usr/lib/apache2/modules/mod_websocket_draft76.so" >> /etc/apache2/apache2.conf
 fi
 
 
@@ -73,5 +73,5 @@ cat <<EOT >> /etc/apache2/apache2.conf
 EOT
 fi
 
-
+cp *.html /var/www/html/
 cd $PWD

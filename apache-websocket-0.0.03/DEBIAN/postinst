@@ -1,0 +1,6 @@
+#!/bin/sh
+# postinst script for apache-websocket
+cd  /usr/share/apache2/apache-websocket
+scons
+scons install
+
