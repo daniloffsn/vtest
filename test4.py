@@ -4,13 +4,18 @@
 from websocket import create_connection
 import sys
 
-if len (sys.argv) > 2:
+if len (sys.argv) > 1:
  first = int(sys.argv[1])
- second = int(sys.argv[2])
- print first
- print second
 else:
- print ("No paramerers!")
+  first = int(raw_input("Enter the first no:"))
+
+if len (sys.argv) > 2:
+ second = int(sys.argv[2])
+else:
+ second = int(raw_input("Enter Second no:"))
+
+print first
+print second
 
 
 
@@ -28,5 +33,6 @@ def echows(N):
      print "Received '%s'" % result
   ws.close()
 
-for j in range(first):
+for j in range(1, first+1):
+   print "Connection", j
    echows(second)
